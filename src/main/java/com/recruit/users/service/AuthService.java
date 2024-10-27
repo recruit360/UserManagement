@@ -3,6 +3,8 @@ package com.recruit.users.service;
 import com.recruit.users.dto.UserLoginDTO;
 import com.recruit.users.model.User;
 import com.recruit.users.repository.UserRepository;
+import com.recruit.users.utils.JwtUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +14,19 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     public String authenticateUser(UserLoginDTO loginDTO) {
-        User user =  new User(); //userRepository.findByUsername(loginDTO.getUsername());
-        user.setId(1233L); user.setUsername("test"); user.setPassword("test"); user.setRole("any");
+        User user = new User(); // userRepository.findByUsername(loginDTO.getUsername());
+        user.setId(1233L);
+        user.setUsername("test");
+        user.setPassword("test");
+        user.setRole("any");
         if (checkPassword(loginDTO.getPassword(), user.getPassword())) {
             return generateToken(user); // Return a token upon successful authentication
         }
@@ -33,6 +39,6 @@ public class AuthService {
 
     private String generateToken(User user) {
         // Generate a JWT or token here
-        return "Succes with token";
+        return jwtUtil.generateToken(user.getUsername());
     }
 }
