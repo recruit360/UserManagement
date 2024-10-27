@@ -1,6 +1,6 @@
 # UserManagement
 Microservice to handle users and company related activity , Register , login , update , forgotpassword etc
-## clone the repo then switch to UserManagement directory
+## clone the repository then switch to UserManagement directory
   Run  below command:
   
        1. 'mvn clean install'
