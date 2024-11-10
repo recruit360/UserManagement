@@ -49,7 +49,10 @@ jobs:
             echo "changed=false" >> $GITHUB_ENV
           fi
 
-      # Step 6: Commit and push changes if any formatting changes are detected
+      - name: Fetch the latest changes
+        run: |
+          git fetch origin
+          git merge origin/${{ github.head_ref }} --no-edit || true
       - name: Commit and Push Changes
         if: env.changed == 'true'
         run: |
