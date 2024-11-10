@@ -9,9 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TalentApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TalentApplication.class, args);
-		System.out.println("Application started successfully on port 8080");
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(TalentApplication.class, args);
+    System.out.println("Application started successfully on port 8080");
+  }
 }

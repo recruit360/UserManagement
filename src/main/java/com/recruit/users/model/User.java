@@ -10,15 +10,15 @@ import lombok.Data;
 @Entity
 @Table(name = "users")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String username;
-    private String email;
+  private String username;
+  private String email;
 
-    @Column(name = "hashed_password")
-    private String password;
+  @Column(name = "hashed_password")
+  private String password;
 
-    private String role;
+  private String role;
 }

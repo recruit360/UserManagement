@@ -1,0 +1,67 @@
+name: Auto-Code-Format
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+jobs:
+  auto-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code from the repository
+      - name: Check out the code
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      # Step 2: Set up JDK (Java 17 in this case)
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: "11"
+
+      # Step 3: Cache Maven dependencies to speed up builds
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # Step 4: Apply Google Java Format using the fmt-maven-plugin
+      - name: Apply Google Java Format with Maven
+        run: mvn fmt:format
+
+      # Step 5: Check if there are any changes after formatting
+      - name: Check for changes
+        run: |
+          if [[ $(git status --porcelain) ]]; then
+            echo "Formatting changes detected."
+            echo "changed=true" >> $GITHUB_ENV
+          else
+            echo "No formatting changes required."
+            echo "changed=false" >> $GITHUB_ENV
+          fi
+
+      - name: Set up authentication
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+      - name: Fetch the latest changes
+        run: |
+          git fetch origin
+          git checkout ${{ github.head_ref }}
+          git merge origin/${{ github.head_ref }} --no-edit || true
+      - name: Commit and Push Changes
+        if: env.changed == 'true'
+        run: |
+          git add .
+          git commit -m "Auto-apply code formatting"
+          git push origin HEAD:${{ github.head_ref }}
