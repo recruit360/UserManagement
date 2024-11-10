@@ -8,8 +8,9 @@ import lombok.Data;
  */
 @Data
 public class UserLoginDTO {
-    @NotBlank(message = "username can not be empty")
-    private String username;
-    @NotBlank(message = "password can not be empty")
-    private String password;
+  @NotBlank(message = "username can not be empty")
+  private String username;
+
+  @NotBlank(message = "password can not be empty")
+  private String password;
 }
