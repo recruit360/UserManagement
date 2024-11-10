@@ -57,6 +57,7 @@ jobs:
       - name: Fetch the latest changes
         run: |
           git fetch origin
+          git checkout ${{ github.head_ref }}
           git merge origin/${{ github.head_ref }} --no-edit || true
       - name: Commit and Push Changes
         if: env.changed == 'true'
