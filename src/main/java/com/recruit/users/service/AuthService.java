@@ -5,11 +5,11 @@ import com.recruit.users.model.User;
 import com.recruit.users.repository.UserRepository;
 import com.recruit.users.utils.JwtUtil;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
+/*
+ * Service for User Authentication
+ */
 @Service
 public class AuthService {
 
