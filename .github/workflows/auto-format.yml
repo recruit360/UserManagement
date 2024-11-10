@@ -49,6 +49,11 @@ jobs:
             echo "changed=false" >> $GITHUB_ENV
           fi
 
+      - name: Set up authentication
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
       - name: Fetch the latest changes
         run: |
           git fetch origin
@@ -56,9 +61,6 @@ jobs:
       - name: Commit and Push Changes
         if: env.changed == 'true'
         run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add .
           git commit -m "Auto-apply code formatting"
           git push origin HEAD:${{ github.head_ref }}
