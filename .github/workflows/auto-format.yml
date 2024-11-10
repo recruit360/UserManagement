@@ -10,36 +10,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Check out the code from the repository
       - name: Check out the code
         uses: actions/checkout@v2
 
+      # Step 2: Set up JDK (Java 17 in this case)
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Install Google Java Format
-        run: |
-          curl -L -o google-java-format.jar https://github.com/google/google-java-format/releases/download/v1.13.0/google-java-format-1.13.0-all-deps.jar
+      # Step 3: Cache Maven dependencies to speed up builds
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-      - name: Apply Google Java Format
-        run: |
-          # Find and format all Java files
-          java -jar google-java-format.jar --replace $(find . -name "*.java")
+      # Step 4: Apply Google Java Format using the fmt-maven-plugin
+      - name: Apply Google Java Format with Maven
+        run: mvn fmt:format
 
+      # Step 5: Check if there are any changes after formatting
       - name: Check for changes
         run: |
           if [[ $(git status --porcelain) ]]; then
             echo "Formatting changes detected."
-            exit 0
+            echo "changed=true" >> $GITHUB_ENV
           else
             echo "No formatting changes required."
-            exit 1
+            echo "changed=false" >> $GITHUB_ENV
           fi
 
+      # Step 6: Commit and push changes if any formatting changes are detected
       - name: Commit and Push Changes
-        if: success() && steps.check-for-changes.outputs.changed == 'true'
+        if: env.changed == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
